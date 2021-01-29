@@ -21,6 +21,7 @@ CREATE TABLE [User] (
   [UserName] nvarchar(20) NOT NULL,
   [Email] nvarchar(555) NOT NULL,
   [Bio] nvarchar(1000) NOT NULL,
+  [ImageUrl] nvarchar(255),
   [IsActive] bit NOT NULL DEFAULT 1,
 
   CONSTRAINT UQ_FirebaseUserId UNIQUE(FirebaseUserId),
@@ -59,12 +60,12 @@ CREATE TABLE [Friend] (
 GO
 
 set identity_insert [User] on
-insert into [User] ([Id], [FirebaseUserId], [UserName], [Email], [Bio], [IsActive])
-values (1,'placeholder1', 'goldenGod', 'dennis@menace.com', 'Its about the implication', 1), 
-	(2, 'placeholder2', 'ratKing', 'bar@janitor.com', 'Oooh cat in the walls', 1),
-	(3, 'placeholder3', 'BigMac', 'ocular@patdown.com', 'Im building mass', 0),
-	(4, 'placeholder4', 'sweetDee', 'failed@actress.com', 'That stupid bitch', 1),
-	(5, 'placeholder5', 'mantisTobagan', 'filth@lover.com', 'Accidentally dropped my magnum condum for my massive dong', 1)
+insert into [User] ([Id], [FirebaseUserId], [UserName], [Email], [Bio], [ImageUrl], [IsActive])
+values (1,'placeholder1', 'goldenGod', 'dennis@menace.com', 'Its about the implication', 'https://icon-library.com/images/default-user-icon/default-user-icon-8.jpg', 1), 
+	(2, 'placeholder2', 'ratKing', 'bar@janitor.com', 'Oooh cat in the walls', 'https://icon-library.com/images/default-user-icon/default-user-icon-8.jpg', 1),
+	(3, 'placeholder3', 'BigMac', 'ocular@patdown.com', 'Im building mass', 'https://icon-library.com/images/default-user-icon/default-user-icon-8.jpg', 0),
+	(4, 'placeholder4', 'sweetDee', 'failed@actress.com', 'That stupid bitch', 'https://icon-library.com/images/default-user-icon/default-user-icon-8.jpg', 1),
+	(5, 'placeholder5', 'mantisTobagan', 'filth@lover.com', 'Accidentally dropped my magnum condum for my massive dong', 'https://icon-library.com/images/default-user-icon/default-user-icon-8.jpg', 1)
 set identity_insert [User] off
 
 set identity_insert [Session] on
