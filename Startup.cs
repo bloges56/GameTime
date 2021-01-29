@@ -34,8 +34,8 @@ namespace GameTime
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            var firebaseProjectId = Configuration.GetValue<string>("gametime-6e4e9");
-            var googleTokenUrl = $"https://securetoken.google.com/gametime-6e4e9";
+            var firebaseProjectId = Configuration.GetValue<string>("FirebaseProjectId");
+            var googleTokenUrl = $"https://securetoken.google.com/{firebaseProjectId}";
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

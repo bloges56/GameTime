@@ -25,7 +25,12 @@ namespace GameTime.Repositories
         public User GetById(int id)
         {
             return _context.User
-                .FirstOrDefault(up => up.Id == id);
+                .FirstOrDefault(u => u.Id == id);
+        }
+
+        public List<User> GetAll()
+        {
+            return _context.User.Where(u => u.IsActive).ToList();
         }
     }
 }

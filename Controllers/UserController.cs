@@ -37,5 +37,13 @@ namespace GameTime.Controllers
 
             return Ok(user);
         }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var users = _repo.GetAll();
+           
+            return Ok(users);
+        }
     }
 }
