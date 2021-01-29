@@ -51,11 +51,11 @@ CREATE TABLE [UserSession] (
 CREATE TABLE [Friend] (
 	[Id] integer PRIMARY KEY IDENTITY,
 	[UserId] integer NOT NULL,
-	[FriendId] integer NOT NULL,
+	[OtherId] integer NOT NULL,
 	[IsConfirmed] bit NOT NULL DEFAULT 0,
 
 	CONSTRAINT [FK_Friend_User] FOREIGN KEY ([UserId]) REFERENCES [User] ([Id]),
-	CONSTRAINT [FK_Friend_Friend] FOREIGN KEY ([FriendId]) REFERENCES [User] ([Id])
+	CONSTRAINT [FK_Friend_Other] FOREIGN KEY ([OtherId]) REFERENCES [User] ([Id])
 )
 GO
 
@@ -75,7 +75,7 @@ values (1, 'Electric Boogaloo', '20210213 08:30:00 PM', 'CharDeeMacDennis', 1),
 set identity_insert [Session] off
 
 set identity_insert [Friend] on
-insert into [Friend] ([Id], [UserId], [FriendId], [IsConfirmed])
+insert into [Friend] ([Id], [UserId], [OtherId], [IsConfirmed])
 values (1, 1, 4, 1), (2, 4, 1, 1), (3, 2, 1, 0), (4, 1, 5, 1), (5, 5, 1, 1), (6, 5, 2, 1), (7, 2, 5, 1), (8, 1, 3, 1), (9, 3, 1, 1)
 set identity_insert [Friend] off
 

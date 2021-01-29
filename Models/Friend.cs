@@ -15,8 +15,8 @@ namespace GameTime.Models
         public User User { get; set; }
 
         [Required]
-        public int FriendId { get; set; }
-        public User FriendObj { get; set; }
+        public int OtherId { get; set; }
+        public User Other { get; set; }
 
         public bool IsConfirmed { get; set; }
     }
