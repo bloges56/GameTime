@@ -35,7 +35,7 @@ export const Home = () => {
     const getConfirmedSessions = () => {
         debugger;
         return getToken().then((token) =>
-        fetch(`https://localhost:5001/api/session/${currentUser.id}`, {
+        fetch(`/api/session/${currentUser.id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`

@@ -1,6 +1,7 @@
 ﻿using GameTime.Models;
 using GameTime.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,7 +14,6 @@ namespace GameTime.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class SessionController : ControllerBase
     {
         private readonly ISessionRepository _sessionRepo;
@@ -24,17 +24,17 @@ namespace GameTime.Controllers
             _userRepo = userRepo;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("confirmed/{id}")]
         public IActionResult GetAllConfirmed(int id)
         {
             //check that the user with the given Id exists, is active, and is the current user
             var user = _userRepo.GetById(id);
             var currentUser = GetCurrentUserProfile();
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest();
             }
-            if(user.IsActive == false || currentUser != user)
+            if (user.IsActive == false || currentUser != user)
             {
                 return Unauthorized();
             }
@@ -44,10 +44,23 @@ namespace GameTime.Controllers
             return Ok(sessions);
         }
 
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            return Ok(_sessionRepo.GetAll());
+        }
+
         private User GetCurrentUserProfile()
         {
-            var firebaseUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _userRepo.GetByFirebaseUserId(firebaseUserId);
+            try
+            {
+                var firebaseUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                return _userRepo.GetByFirebaseUserId(firebaseUserId);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

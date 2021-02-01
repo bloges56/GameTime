@@ -5,6 +5,7 @@ namespace GameTime.Repositories
 {
     public interface ISessionRepository
     {
+        List<Session> GetAll();
         List<Session> GetAllConfirmed(int userId);
     }
 }
