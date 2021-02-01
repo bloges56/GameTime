@@ -32,5 +32,11 @@ namespace GameTime.Repositories
         {
             return _context.User.Where(u => u.IsActive).ToList();
         }
+
+        public void Add(User userProfile)
+        {
+            _context.Add(userProfile);
+            _context.SaveChanges();
+        }
     }
 }
