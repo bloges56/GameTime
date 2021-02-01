@@ -1,5 +1,6 @@
 ﻿using GameTime.Models;
 using GameTime.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +25,7 @@ namespace GameTime.Controllers
             _userRepo = userRepo;
         }
 
+        
         [HttpGet("confirmed/{id}")]
         public IActionResult GetAllConfirmed(int id)
         {
