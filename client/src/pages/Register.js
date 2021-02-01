@@ -9,9 +9,8 @@ import "./Login.css";
 const Register = () => {
   const { register } = useContext(UserProfileContext);
   const [loading, setLoading] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [bio, setBio] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -23,7 +22,7 @@ const Register = () => {
     const data = new FormData()
     data.append("file", file)
     data.append("upload_preset", "capstone-images")
-    fetch("https://api.cloudinary.com/v1_1/blaker814/image/upload", {
+    fetch("https://api.cloudinary.com/v1_1/dohhaxbmj/image/upload", {
       method: "POST",
       body: data
     })
@@ -44,17 +43,16 @@ const Register = () => {
     setLoading(true);
 
     const profile = {
-      firstName,
-      lastName,
-      displayName,
+      userName,
       email,
-      imageLocation: previewSource,
+      bio,
+      imageUrl: previewSource,
       IsActive: true
     };
     register(profile, password)
       .then((user) => {
         setLoading(false);
-        toast.info(`Welcome ${user.displayName}`);
+        toast.info(`Welcome ${user.userName}`);
         history.push("/");
       })
       .catch((err) => {
@@ -72,31 +70,21 @@ const Register = () => {
         <h2 className="text-center">User Register</h2>
         <div className="form-group">
           <Input
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => setUserName(e.target.value)}
             type="text"
             className="form-control"
-            name="firstName"
-            placeholder="First Name"
+            name="userName"
+            placeholder="Username"
             required="required"
           />
         </div>
         <div className="form-group">
           <Input
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => setBio(e.target.value)}
             type="text"
             className="form-control"
-            name="lastName"
-            placeholder="Last Name"
-            required="required"
-          />
-        </div>
-        <div className="form-group">
-          <Input
-            onChange={(e) => setDisplayName(e.target.value)}
-            type="text"
-            className="form-control"
-            name="displayName"
-            placeholder="Display Name"
+            name="bio"
+            placeholder="Bio"
             required="required"
           />
         </div>

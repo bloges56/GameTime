@@ -1,8 +1,8 @@
 {
   "name": "client",
+  "proxy": "https://localhost:5001",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://localhost:5001",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",

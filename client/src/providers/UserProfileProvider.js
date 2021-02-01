@@ -8,7 +8,7 @@ export const UserProfileContext = createContext();
 export function UserProfileProvider(props) {
   const apiUrl = "/api/user";
 
-  const userProfile = localStorage.getItem("user");
+  const userProfile = localStorage.getItem("userProfile");
   const [isLoggedIn, setIsLoggedIn] = useState(userProfile !== null);
 
   const [isFirebaseReady, setIsFirebaseReady] = useState(false);
@@ -93,11 +93,7 @@ export function UserProfileProvider(props) {
     return JSON.parse(user);
   };
 
-  const isAdmin = () => {
-    const user = getCurrentUser();
-    const adminTypeId = 1;
-    return user !== null && user.userTypeId === adminTypeId;
-  };
+  
 
   return (
     <UserProfileContext.Provider
@@ -108,7 +104,6 @@ export function UserProfileProvider(props) {
         register,
         getToken,
         getCurrentUser,
-        isAdmin,
       }}
     >
       {isFirebaseReady ? (
