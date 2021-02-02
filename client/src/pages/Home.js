@@ -34,7 +34,6 @@ export const Home = () => {
     let currentUser = getCurrentUser();
 
     const getConfirmedSessions = () => {
-        debugger;
         return getToken().then((token) =>
         fetch(`/api/session/confirmed/${currentUser.id}`, {
           method: "GET",
@@ -48,7 +47,6 @@ export const Home = () => {
     }
 
     const getUnconfirmedSessions = () => {
-      debugger;
       return getToken().then((token) =>
       fetch(`/api/session/unconfirmed/${currentUser.id}`, {
         method: "GET",
