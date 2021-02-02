@@ -29,6 +29,21 @@ namespace GameTime.Controllers
             _friendRepo = friendRepo;
         }
 
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            // check that the session exists
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+            var currentUser = GetCurrentUserProfile();
+
+            var users = _userSessionRepo.Get(currentUser.Id, session.Id);
+            return Ok(users);
+        }
+
         // endpoint to post a user session
         [HttpPost]
         public IActionResult Add(UserSession userSession)

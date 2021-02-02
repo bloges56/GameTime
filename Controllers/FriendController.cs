@@ -18,10 +18,14 @@ namespace GameTime.Controllers
     {
         private readonly IFriendRepository _friendRepo;
         private readonly IUserRepository _userRepo;
-        public FriendController(IFriendRepository friendRepo, IUserRepository userRepo)
+        private readonly IUserSessionRepository _userSessionRepo;
+        private readonly ISessionRepository _sessionRepo;
+        public FriendController(IFriendRepository friendRepo, IUserRepository userRepo, IUserSessionRepository userSessionRepo, ISessionRepository sessionRepo)
         {
             _userRepo = userRepo;
             _friendRepo = friendRepo;
+            _userSessionRepo = userSessionRepo;
+            _sessionRepo = sessionRepo;
         }
 
         // endpoint for getting all the friends of a user
@@ -45,6 +49,31 @@ namespace GameTime.Controllers
             // return all the friends of the given user
             var friends = _friendRepo.Get(id);
             return Ok(friends);
+        }
+
+        // get all the excluded friends of current user and a given session
+        [HttpGet("excluded/{id}")]
+        public IActionResult GetExcluded(int id)
+        {
+            // check that the given session exists
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+
+            //get all the users already in a current session
+            var currentUser = GetCurrentUserProfile();
+            var usersInSession = _userSessionRepo.Get(currentUser.Id, id);
+
+            // get all the friends of the current user
+            var friends = _friendRepo.Get(currentUser.Id);
+
+            // filter out the friends that are already invited to the session
+            var excluded = friends.Except(usersInSession);
+
+            // return the excluded friends
+            return Ok(excluded);
         }
 
         private User GetCurrentUserProfile()
