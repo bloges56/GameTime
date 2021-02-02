@@ -28,6 +28,7 @@ export const Home = () => {
       const classes = useStyles();
 
     const [ confirmedSessions, setConfirmedSessions ] = useState([]);
+    const [ unconfirmedSessions, setUnconfirmedSessions ] = useState([]);
     const { getCurrentUser, getToken } = useContext(UserProfileContext);
 
     let currentUser = getCurrentUser();
@@ -46,11 +47,27 @@ export const Home = () => {
       );
     }
 
+    const getUnconfirmedSessions = () => {
+      debugger;
+      return getToken().then((token) =>
+      fetch(`/api/session/unconfirmed/${currentUser.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((resp) => resp.json())
+      .then(setUnconfirmedSessions)
+    );
+  }
+
     useEffect(() => {
         getConfirmedSessions()
+        getUnconfirmedSessions()
     }, [])
 
     return (
+      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Typography variant="h6" className={classes.title}>
             Your Upocoming Sessions
@@ -73,5 +90,28 @@ export const Home = () => {
             </List>
           </div>
         </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" className={classes.title}>
+            Unconfirmed Sessions
+          </Typography>
+          <div className={classes.demo}>
+            <List>
+              {unconfirmedSessions.map(session => {
+                  return <ListItem key={session.id}>
+                      <ListItemAvatar>
+                          <Avatar>
+                              <FolderIcon />
+                          </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText 
+                        primary={session.title}
+                        secondary={session.time}
+                      />
+                  </ListItem>
+              })}
+            </List>
+          </div>
+        </Grid>
+      </Grid>
     )
 }
