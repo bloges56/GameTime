@@ -27,6 +27,7 @@ namespace GameTime.Repositories
             try
             {
                 return _context.User
+                .Where(u => u.IsActive)
                 .FirstOrDefault(u => u.Id == id);
             }
             catch

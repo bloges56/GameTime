@@ -75,6 +75,28 @@ namespace GameTime.Controllers
             return Ok(_sessionRepo.GetAll());
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var currentUser = GetCurrentUserProfile();
+            var users = _userSessionRepo.Get(currentUser.Id, id);
+
+            // check that the session exists
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+
+            // make sure that the current user has either been invited to the sesison or is the session owner
+            if(!users.Contains(currentUser) && session.OwnerId != currentUser.Id)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(session);
+        }
+
         //endpoint for posting a new session
         [HttpPost]
         public IActionResult Add(Session session)
