@@ -19,6 +19,6 @@ namespace GameTime.Data
         public DbSet<User> User { get; set; }
         public DbSet<Session> Session { get; set; }
         public DbSet<Friend> Friend { get; set; }
-        public DbSet<UserSession> UserType { get; set; }
+        public DbSet<UserSession> UserSession { get; set; }
     }
 }

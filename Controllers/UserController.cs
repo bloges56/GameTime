@@ -12,7 +12,6 @@ namespace GameTime.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
@@ -39,7 +38,7 @@ namespace GameTime.Controllers
             return Ok(user);
         }
 
-        [HttpGet("getall")]
+        [HttpGet]
         public IActionResult GetAll()
         {
             var users = _repo.GetAll();

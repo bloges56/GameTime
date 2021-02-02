@@ -1,9 +1,115 @@
-import React from "react";
+import React, {useContext, useState, useEffect} from "react";
+import { UserProfileContext } from "../providers/UserProfileProvider";
+import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import FolderIcon from '@material-ui/icons/Folder';
 
 export const Home = () => {
+
+    const useStyles = makeStyles((theme) => ({
+        root: {
+          flexGrow: 1,
+          maxWidth: 752,
+        },
+        demo: {
+          backgroundColor: theme.palette.background.paper,
+        },
+        title: {
+          margin: theme.spacing(4, 0, 2),
+        },
+      }));
+
+      const classes = useStyles();
+
+    const [ confirmedSessions, setConfirmedSessions ] = useState([]);
+    const [ unconfirmedSessions, setUnconfirmedSessions ] = useState([]);
+    const { getCurrentUser, getToken } = useContext(UserProfileContext);
+
+    let currentUser = getCurrentUser();
+
+    const getConfirmedSessions = () => {
+        return getToken().then((token) =>
+        fetch(`/api/session/confirmed/${currentUser.id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((resp) => resp.json())
+        .then(setConfirmedSessions)
+      );
+    }
+
+    const getUnconfirmedSessions = () => {
+      return getToken().then((token) =>
+      fetch(`/api/session/unconfirmed/${currentUser.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((resp) => resp.json())
+      .then(setUnconfirmedSessions)
+    );
+  }
+
+    useEffect(() => {
+        getConfirmedSessions()
+        getUnconfirmedSessions()
+    }, [])
+
     return (
-        <>
-            <h1>You're logged in!</h1>
-        </>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" className={classes.title}>
+            Your Upocoming Sessions
+          </Typography>
+          <div className={classes.demo}>
+            <List>
+              {confirmedSessions.map(session => {
+                  return <ListItem key={session.id}>
+                      <ListItemAvatar>
+                          <Avatar>
+                              <FolderIcon />
+                          </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText 
+                        primary={session.title}
+                        secondary={session.time}
+                      />
+                  </ListItem>
+              })}
+            </List>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" className={classes.title}>
+            Unconfirmed Sessions
+          </Typography>
+          <div className={classes.demo}>
+            <List>
+              {unconfirmedSessions.map(session => {
+                  return <ListItem key={session.id}>
+                      <ListItemAvatar>
+                          <Avatar>
+                              <FolderIcon />
+                          </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText 
+                        primary={session.title}
+                        secondary={session.time}
+                      />
+                  </ListItem>
+              })}
+            </List>
+          </div>
+        </Grid>
+      </Grid>
     )
 }
