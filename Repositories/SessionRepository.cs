@@ -46,6 +46,11 @@ namespace GameTime.Repositories
             _context.SaveChanges();
         }
 
+        public Session GetById(int id)
+        {
+            return _context.Session.Where(s => s.Id == id).FirstOrDefault();
+        }
+
         public List<Session> GetAll()
         {
             return _context.Session.ToList();

@@ -20,10 +20,12 @@ namespace GameTime.Controllers
     {
         private readonly ISessionRepository _sessionRepo;
         private readonly IUserRepository _userRepo;
-        public SessionController(ISessionRepository sessionRepo, IUserRepository userRepo)
+        private readonly IUserSessionRepository _userSessionRepo;
+        public SessionController(ISessionRepository sessionRepo, IUserRepository userRepo, IUserSessionRepository userSessionRepo)
         {
             _sessionRepo = sessionRepo;
             _userRepo = userRepo;
+            _userSessionRepo = userSessionRepo;
         }
 
         
@@ -91,7 +93,19 @@ namespace GameTime.Controllers
                 return Unauthorized();
             }
 
+           
+
             _sessionRepo.Add(session);
+
+            //add a userSession for the owner
+            UserSession userSession = new UserSession()
+            {
+                SessionId = session.Id,
+                UserId = currentUser.Id,
+                IsConfirmed = true
+            };
+            _userSessionRepo.Add(userSession);
+
             return Ok(session);
         }
 

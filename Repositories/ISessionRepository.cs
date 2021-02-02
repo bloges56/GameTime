@@ -9,5 +9,6 @@ namespace GameTime.Repositories
         List<Session> GetAll();
         List<Session> GetAllConfirmed(int userId);
         List<Session> GetAllUnConfirmed(int userId);
+        Session GetById(int id);
     }
 }
