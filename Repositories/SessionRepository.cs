@@ -28,6 +28,17 @@ namespace GameTime.Repositories
                 .ToList();
         }
 
+        //return all the sessions from the database that have the matching userId and are unconfirmed
+        public List<Session> GetAllUnConfirmed(int userId)
+        {
+            return _context.UserSession
+                .Include(us => us.Session)
+                .Where(us => us.UserId == userId && !us.IsConfirmed)
+                .Where(us => us.Session.Time > DateTime.Now)
+                .Select(us => us.Session)
+                .ToList();
+        }
+
         public List<Session> GetAll()
         {
             return _context.Session.ToList();

@@ -15,6 +15,7 @@ namespace GameTime.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SessionController : ControllerBase
     {
         private readonly ISessionRepository _sessionRepo;
@@ -43,6 +44,26 @@ namespace GameTime.Controllers
 
             //return the sessions using the repo method
             var sessions = _sessionRepo.GetAllConfirmed(id);
+            return Ok(sessions);
+        }
+
+        [HttpGet("unconfirmed/{id}")]
+        public IActionResult GetAllUnConfirmed(int id)
+        {
+            //check that the user with the given Id exists, is active, and is the current user
+            var user = _userRepo.GetById(id);
+            var currentUser = GetCurrentUserProfile();
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            if (user.IsActive == false || currentUser != user)
+            {
+                return Unauthorized();
+            }
+
+            //return the sessions using the repo method
+            var sessions = _sessionRepo.GetAllUnConfirmed(id);
             return Ok(sessions);
         }
 
