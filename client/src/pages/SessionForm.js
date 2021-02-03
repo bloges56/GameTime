@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { UserProfileContext } from "../providers/UserProfileProvider";
 import {
-  FormControl,
+  Button,
   FormGroup,
   Container,
   TextField,
@@ -15,7 +15,7 @@ import {
   Input,
   InputLabel,
   Avatar,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 
 const SessionForm = () => {
@@ -25,6 +25,7 @@ const SessionForm = () => {
 
   const [session, setSession] = useState({
     ownerId: currentUser.id,
+    time: new Date()
   });
   const [included, setIncluded] = useState([]);
   const [excluded, setExcluded] = useState([]);
@@ -85,7 +86,6 @@ const SessionForm = () => {
   };
 
   useEffect(() => {
-      debugger;
     if (sessionId) {
       getIncluded();
       getExcluded();
@@ -100,23 +100,24 @@ const SessionForm = () => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const includedValue = excludedCopy.find((user) => user.id === e.target.key);
-    const newExcluded = excludedCopy.filter((user) => user.id !== e.target.key);
-    const newIncluded = includedCopy.add(includedValue);
+    const includedValue = excludedCopy.find((user) => user.id === parseInt(e.target.dataset.value));
+    const newExcluded = excludedCopy.filter((user) => user.id !== parseInt(e.target.dataset.value));
+    includedCopy.push(includedValue);
 
     setExcluded(newExcluded);
-    setIncluded(newIncluded);
+    setIncluded(includedCopy);
   };
 
-  const exclude = (e) => {
+  //updates the excluded and included states when a user is removed from the list
+  const exclude = (id) => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const excludedValue = includedCopy.find((user) => user.id === e.target.key);
-    const newIncluded = includedCopy.filter((user) => user.id !== e.target.key);
-    const newExcluded = excludedCopy.add(excludedValue);
+    const excludedValue = includedCopy.find((user) => user.id === id);
+    const newIncluded = includedCopy.filter((user) => user.id !== id);
+    excludedCopy.push(excludedValue);
 
-    setExcluded(newExcluded);
+    setExcluded(excludedCopy);
     setIncluded(newIncluded);
   };
 
@@ -155,6 +156,7 @@ const SessionForm = () => {
   const history = useHistory();
 
   const onSubmit = () => {
+    debugger;
     setLoading(true);
     addSession().then((addedSession) => {
       addUserSessions(addedSession);
@@ -164,75 +166,79 @@ const SessionForm = () => {
   };
 
   const UpdateOnInputChange = (e) => {
-    let newSession = [...session];
+    let newSession = { ...session };
     newSession[e.target.name] = e.target.value;
     setSession(newSession);
   };
 
   return (
     <Container>
-      <FormControl>
-        <FormGroup>
-          <InputLabel htmlfor="title">Title</InputLabel>
-          <Input
-            id="title"
-            name="title"
-            value={session.title}
-            onChange={UpdateOnInputChange}
-          />
-        </FormGroup>
+      <FormGroup>
+        <InputLabel htmlFor="title">Title</InputLabel>
+        <Input
+          id="title"
+          name="title"
+          defaultValue={session.title}
+          onChange={UpdateOnInputChange}
+        />
+      </FormGroup>
 
-        <FormGroup>
-          <TextField
-            id="time"
-            label="time"
-            name="time"
-            type="datetime-local"
-            defaultValue={new Date()}
-            value={session.time}
-            onChange={UpdateOnInputChange}
-          />
-        </FormGroup>
+      <FormGroup>
+        <TextField
+          id="time"
+          label="time"
+          name="time"
+          type="datetime-local"
+          defaultValue={session.time}
+          onChange={UpdateOnInputChange}
+        />
+      </FormGroup>
 
-        <FormGroup>
-          <InputLabel htmlfor="game">Game</InputLabel>
-          <Input
-            id="game"
-            name="game"
-            value={session.game}
-            onChange={UpdateOnInputChange}
-          />
-        </FormGroup>
-      </FormControl>
+      <FormGroup>
+        <InputLabel htmlFor="game">Game</InputLabel>
+        <Input
+          id="game"
+          name="game"
+          defaultValue={session.game}
+          onChange={UpdateOnInputChange}
+        />
+      </FormGroup>
+
       <Grid container spacing={2}>
         <Grid item>
-          <FormControl>
-            <InputLabel>Add Friends</InputLabel>
-            <Select>
-              {excluded.map((friend) => {
-                return <MenuItem key={friend.id} onClick={include}></MenuItem>;
-              })}
-            </Select>
-          </FormControl>
+          <InputLabel>Add Friends</InputLabel>
+          <Select>
+            {excluded.map((friend) => {
+              return (
+                <MenuItem key={friend.id} value={friend.id} onClick={include}>
+                  {friend.userName}
+                </MenuItem>
+              );
+            })}
+          </Select>
         </Grid>
         <Grid item>
           <List>
             {included.map((friend) => {
               return (
-                <ListItem key={friend.id} onClick={exclude}>
+                <ListItem key={friend.id} >
                   <ListItemAvatar>
-                    <Avatar alt={friend.userName} src={friend.imageUrl}>
-                    </Avatar>
+                    <Avatar
+                      alt={friend.userName}
+                      src={friend.imageUrl}
+                    ></Avatar>
                   </ListItemAvatar>
-                  <ListItemText
-                    primary={friend.userName}
-                  />
+                  <ListItemText primary={friend.userName} />
+                  <Button onClick={() => {
+                    exclude(friend.id)
+                    }}>Remove</Button>
                 </ListItem>
               );
             })}
           </List>
         </Grid>
       </Grid>
+      <Button onClick={onSubmit}>Create</Button>
     </Container>
   );
 };
