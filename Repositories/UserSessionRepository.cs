@@ -65,5 +65,11 @@ namespace GameTime.Repositories
                 .Where(us => us.UserId == userId && us.SessionId == sessionId)
                 .FirstOrDefault();
         }
+
+        public void Update(UserSession userSession)
+        {
+            _context.Entry(userSession).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
     }
 }

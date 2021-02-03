@@ -111,6 +111,24 @@ export const Home = () => {
     );
   }
 
+  //confirm a selected session
+  const confirmSession = (e) => {
+    setLoading(true)
+    debugger;
+    return getToken().then((token) =>
+      fetch(`/api/usersession/confirm/${e.target.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }))
+        .then(()=>{
+          getConfirmedSessions()
+          getUnconfirmedSessions()
+          setLoading(false)
+        })
+  }
+
   useEffect(() => {
     getConfirmedSessions();
     getUnconfirmedSessions();
@@ -191,6 +209,7 @@ export const Home = () => {
                     primary={session.title}
                     secondary={session.time}
                   />
+                  <button type="button" id={session.id} disabled={loading} onClick={confirmSession}>Confirm</button>
                 </ListItem>
               );
             })}

@@ -118,6 +118,31 @@ namespace GameTime.Controllers
             return NoContent();
         }
 
+        [HttpPut("confirm/{id}")]
+        public IActionResult Confirm(int id)
+        {
+            //check that the given session is valid
+            var session = _sessionRepo.GetById(id);
+            if (session == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = GetCurrentUserProfile();
+            var userSession = _userSessionRepo.GetByContent(currentUser.Id, id);
+            //check that the userSession exists
+            if (userSession == null)
+            {
+                return Unauthorized();
+            }
+
+            //update the userSession to be confirmed
+            userSession.IsConfirmed = true;
+            _userSessionRepo.Update(userSession);
+            return NoContent();
+
+        }
+
         private User GetCurrentUserProfile()
         {
             try
