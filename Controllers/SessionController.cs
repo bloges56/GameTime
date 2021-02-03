@@ -131,6 +131,52 @@ namespace GameTime.Controllers
             return Ok(session);
         }
 
+        // update a given session
+        [HttpPut("{id}")]
+        public IActionResult Update(Session session, int id)
+        {
+            //check that the given id matches the given session
+            if(id != session.Id)
+            {
+                return BadRequest();
+            }
+
+            var originalSession = _sessionRepo.GetById(id);
+            //check that the current user is also the owner of the session
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != originalSession.OwnerId || currentUser.Id != session.OwnerId)
+            {
+                return Unauthorized();
+            }
+
+            _sessionRepo.Update(session);
+            return NoContent();
+
+        }
+
+        // endpoint to delete a given session
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            //check that the given id is valid
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+
+            //check that the session's owner is the current user
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != session.OwnerId)
+            {
+                return Unauthorized();
+            }
+
+            _sessionRepo.Delete(session);
+            return NoContent();
+
+        }
+
         private User GetCurrentUserProfile()
         {
             try

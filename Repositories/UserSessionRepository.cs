@@ -33,5 +33,37 @@ namespace GameTime.Repositories
             _context.Add(userSession);
             _context.SaveChanges();
         }
+
+        //return true if a user session with the given userID and sessionId exists
+        public bool Exists(int userId, int sessionId)
+        {
+            var userSession = _context.UserSession
+                .Where(us => us.UserId == userId && us.SessionId == sessionId);
+            return userSession.Count() >= 1;
+        }
+
+        // remove a userSession from the database
+        public void Delete(UserSession userSession)
+        {
+            _context.UserSession.Remove(userSession);
+            _context.SaveChanges();
+        }
+
+        // get a userSession by its id
+        public UserSession GetById(int id)
+        {
+            return _context.UserSession
+                .Where(us => us.Id == id)
+                .Include(us => us.Session)
+                .FirstOrDefault();
+        }
+
+        public UserSession GetByContent(int userId, int sessionId)
+        {
+            return _context.UserSession
+                .Include(us => us.Session)
+                .Where(us => us.UserId == userId && us.SessionId == sessionId)
+                .FirstOrDefault();
+        }
     }
 }

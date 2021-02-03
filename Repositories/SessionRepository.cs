@@ -51,9 +51,36 @@ namespace GameTime.Repositories
             return _context.Session.Where(s => s.Id == id).FirstOrDefault();
         }
 
+        //edit a session in the database
+        public void Update(Session session)
+        {
+            //check that the given session exits
+            var original = GetById(session.Id);
+            if(original == null)
+            {
+                return;
+            }
+            //detach from original session and update with new data
+            _context.Entry(original).State = EntityState.Detached;
+            _context.Entry(session).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
+
         public List<Session> GetAll()
         {
             return _context.Session.ToList();
+        }
+
+        // remove a session and all related userSessions
+        public void Delete(Session session)
+        {
+            var userSessions = _context.UserSession
+                .Where(us => us.SessionId == session.Id)
+                .ToList();
+            _context.UserSession.RemoveRange(userSessions);
+
+            _context.Session.Remove(session);
+            _context.SaveChanges();
         }
     }
 }

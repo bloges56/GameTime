@@ -7,7 +7,6 @@ import SessionForm from "../pages/SessionForm";
 
 import { Home } from "../pages/Home";
 
-
 const ApplicationViews = () => {
   const { isLoggedIn } = useContext(UserProfileContext);
 
@@ -17,6 +16,9 @@ const ApplicationViews = () => {
         {isLoggedIn ? <Home /> : <Redirect to="/login" />}
       </Route>
       <Route path="/create">
+        {isLoggedIn ? <SessionForm /> : <Redirect to="/login" />}
+      </Route>
+      <Route path="/edit/:sessionId">
         {isLoggedIn ? <SessionForm /> : <Redirect to="/login" />}
       </Route>
       <Route path="/login">

@@ -19,19 +19,30 @@ import {
 } from "@material-ui/core";
 
 const SessionForm = () => {
-  const { getCurrentUser, getToken } = useContext(UserProfileContext);
+  const { getCurrentUser, getToken, isAuthorized } = useContext(
+    UserProfileContext
+  );
+
+  const history = useHistory();
 
   const currentUser = getCurrentUser();
 
-  const [session, setSession] = useState({
-    ownerId: currentUser.id,
-    time: new Date()
-  });
+  const { sessionId } = useParams();
+  // const [session, setSession] = useState({
+  //   ownerId: currentUser.id,
+  //   time: new Date()
+  // });
+
+  const [title, setTitle ] = useState()
+  const [game, setGame ] = useState()
+  const [time, setTime] = useState()
+
+
   const [included, setIncluded] = useState([]);
   const [excluded, setExcluded] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { sessionId } = useParams();
+  
 
   const getIncluded = () => {
     return getToken().then((token) =>
@@ -81,7 +92,11 @@ const SessionForm = () => {
         },
       })
         .then((resp) => resp.json())
-        .then(setSession)
+        .then(session => {
+          setTitle(session.title)
+          setGame(session.game)
+          setTime(session.time)
+        })
     );
   };
 
@@ -100,8 +115,12 @@ const SessionForm = () => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const includedValue = excludedCopy.find((user) => user.id === parseInt(e.target.dataset.value));
-    const newExcluded = excludedCopy.filter((user) => user.id !== parseInt(e.target.dataset.value));
+    const includedValue = excludedCopy.find(
+      (user) => user.id === parseInt(e.target.dataset.value)
+    );
+    const newExcluded = excludedCopy.filter(
+      (user) => user.id !== parseInt(e.target.dataset.value)
+    );
     includedCopy.push(includedValue);
 
     setExcluded(newExcluded);
@@ -140,7 +159,32 @@ const SessionForm = () => {
     }
   };
 
+  const removeUserSessions = () => {
+    for (let i = 0; i < excluded.length; i++) {
+      const userSessionToDelete = {
+        sessionId: sessionId,
+        userId: excluded[i].id,
+      };
+      getToken().then((token) =>
+        fetch("/api/usersession/", {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userSessionToDelete),
+        })
+      );
+    }
+  };
+
   const addSession = () => {
+    const sessionToAdd = {
+      title: title,
+      time: time,
+      game: game,
+      ownerId: currentUser.id,
+    }
     return getToken().then((token) =>
       fetch("/api/session", {
         method: "POST",
@@ -148,27 +192,44 @@ const SessionForm = () => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(session),
+        body: JSON.stringify(sessionToAdd),
       }).then((resp) => resp.json())
     );
   };
 
-  const history = useHistory();
-
-  const onSubmit = () => {
-    debugger;
-    setLoading(true);
-    addSession().then((addedSession) => {
-      addUserSessions(addedSession);
-      setLoading(false);
-      history.push("/");
-    });
+  const editSession = (sessionToEdit) => {
+    return getToken().then((token) =>
+      fetch(`/api/session/${sessionId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sessionToEdit),
+      })
+    );
   };
 
-  const UpdateOnInputChange = (e) => {
-    let newSession = { ...session };
-    newSession[e.target.name] = e.target.value;
-    setSession(newSession);
+  const onSubmit = () => {
+    setLoading(true);
+    if (sessionId) {
+      const sessionToEdit = {
+        id: sessionId,
+        title: title,
+        time: time,
+        game: game,
+        ownerId: currentUser.id,
+      }
+      editSession(sessionToEdit);
+      removeUserSessions();
+      addUserSessions(sessionToEdit);
+    } else {
+      addSession().then((addedSession) => {
+        addUserSessions(addedSession);
+      });
+    }
+    setLoading(false);
+    history.push("/");
   };
 
   return (
@@ -178,8 +239,8 @@ const SessionForm = () => {
         <Input
           id="title"
           name="title"
-          defaultValue={session.title}
-          onChange={UpdateOnInputChange}
+          onChange={(e) => {setTitle(e.target.value)}}
+          value={title}
         />
       </FormGroup>
 
@@ -189,8 +250,8 @@ const SessionForm = () => {
           label="time"
           name="time"
           type="datetime-local"
-          defaultValue={session.time}
-          onChange={UpdateOnInputChange}
+          value={time}
+          onChange={(e) => {setTime(e.target.value)}}
         />
       </FormGroup>
 
@@ -199,8 +260,8 @@ const SessionForm = () => {
         <Input
           id="game"
           name="game"
-          defaultValue={session.game}
-          onChange={UpdateOnInputChange}
+          value={game}
+          onChange={(e) => {setGame(e.target.value)}}
         />
       </FormGroup>
 
@@ -221,7 +282,7 @@ const SessionForm = () => {
           <List>
             {included.map((friend) => {
               return (
-                <ListItem key={friend.id} >
+                <ListItem key={friend.id}>
                   <ListItemAvatar>
                     <Avatar
                       alt={friend.userName}
@@ -229,16 +290,22 @@ const SessionForm = () => {
                     ></Avatar>
                   </ListItemAvatar>
                   <ListItemText primary={friend.userName} />
-                  <Button onClick={() => {
-                    exclude(friend.id)
-                    }}>Remove</Button>
+                  <Button
+                    onClick={() => {
+                      exclude(friend.id);
+                    }}
+                  >
+                    Remove
+                  </Button>
                 </ListItem>
               );
             })}
           </List>
         </Grid>
       </Grid>
-      <Button onClick={onSubmit}>Create</Button>
+      <Button disabled={loading} onClick={onSubmit}>
+        {sessionId ? <>Edit</> : <>Create</>}
+      </Button>
     </Container>
   );
 };
