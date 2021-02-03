@@ -10,5 +10,6 @@ namespace GameTime.Repositories
         List<Session> GetAllConfirmed(int userId);
         List<Session> GetAllUnConfirmed(int userId);
         Session GetById(int id);
+        void Update(Session session);
     }
 }
