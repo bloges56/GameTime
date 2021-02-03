@@ -154,6 +154,29 @@ namespace GameTime.Controllers
 
         }
 
+        // endpoint to delete a given session
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            //check that the given id is valid
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+
+            //check that the session's owner is the current user
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != session.OwnerId)
+            {
+                return Unauthorized();
+            }
+
+            _sessionRepo.Delete(session);
+            return NoContent();
+
+        }
+
         private User GetCurrentUserProfile()
         {
             try

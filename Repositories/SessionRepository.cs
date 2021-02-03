@@ -70,5 +70,17 @@ namespace GameTime.Repositories
         {
             return _context.Session.ToList();
         }
+
+        // remove a session and all related userSessions
+        public void Delete(Session session)
+        {
+            var userSessions = _context.UserSession
+                .Where(us => us.SessionId == session.Id)
+                .ToList();
+            _context.UserSession.RemoveRange(userSessions);
+
+            _context.Session.Remove(session);
+            _context.SaveChanges();
+        }
     }
 }
