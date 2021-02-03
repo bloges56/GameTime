@@ -7,11 +7,8 @@ import SessionForm from "../pages/SessionForm";
 
 import { Home } from "../pages/Home";
 
-
 const ApplicationViews = () => {
   const { isLoggedIn } = useContext(UserProfileContext);
-
-  //check that current user is the owner of the session they are trying to edit
 
   return (
     <Switch>

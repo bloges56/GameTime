@@ -93,7 +93,24 @@ export function UserProfileProvider(props) {
     return JSON.parse(user);
   };
 
-  
+  // const isAuthorized = (sessionId) => {
+  //   return getToken().then((token) =>
+  //     fetch(`/api/session/${sessionId}`, {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     }).then(resp => resp.json())
+  //       .then(session => {
+  //         if(session.title === "Unauthorized"){
+  //           return false;
+  //         }
+  //         else{
+  //           return true
+  //         }
+  //       })
+  //   );
+  // }
 
   return (
     <UserProfileContext.Provider
@@ -103,7 +120,7 @@ export function UserProfileProvider(props) {
         logout,
         register,
         getToken,
-        getCurrentUser,
+        getCurrentUser
       }}
     >
       {isFirebaseReady ? (
