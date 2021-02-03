@@ -20,10 +20,12 @@ namespace GameTime.Controllers
     {
         private readonly ISessionRepository _sessionRepo;
         private readonly IUserRepository _userRepo;
-        public SessionController(ISessionRepository sessionRepo, IUserRepository userRepo)
+        private readonly IUserSessionRepository _userSessionRepo;
+        public SessionController(ISessionRepository sessionRepo, IUserRepository userRepo, IUserSessionRepository userSessionRepo)
         {
             _sessionRepo = sessionRepo;
             _userRepo = userRepo;
+            _userSessionRepo = userSessionRepo;
         }
 
         
@@ -71,6 +73,62 @@ namespace GameTime.Controllers
         public IActionResult GetAll()
         {
             return Ok(_sessionRepo.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var currentUser = GetCurrentUserProfile();
+            var users = _userSessionRepo.Get(currentUser.Id, id);
+
+            // check that the session exists
+            var session = _sessionRepo.GetById(id);
+            if(session == null)
+            {
+                return BadRequest();
+            }
+
+            // make sure that the current user has either been invited to the sesison or is the session owner
+            if(!users.Contains(currentUser) && session.OwnerId != currentUser.Id)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(session);
+        }
+
+        //endpoint for posting a new session
+        [HttpPost]
+        public IActionResult Add(Session session)
+        {
+            // check that the session user both exists and is the current user
+            var user = _userRepo.GetById(session.OwnerId);
+            var currentUser = GetCurrentUserProfile();
+
+            if(user == null)
+            {
+                return BadRequest();
+            }
+
+            if(user != currentUser)
+            {
+                return Unauthorized();
+            }
+
+           
+
+            _sessionRepo.Add(session);
+
+            //add a userSession for the owner
+            UserSession userSession = new UserSession()
+            {
+                SessionId = session.Id,
+                UserId = currentUser.Id,
+                IsConfirmed = true
+            };
+            _userSessionRepo.Add(userSession);
+
+            return Ok(session);
         }
 
         private User GetCurrentUserProfile()

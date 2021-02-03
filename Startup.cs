@@ -34,6 +34,8 @@ namespace GameTime
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISessionRepository, SessionRepository>();
+            services.AddTransient<IUserSessionRepository, UserSessionRepository>();
+            services.AddTransient<IFriendRepository, FriendRepository>();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             var firebaseProjectId = Configuration.GetValue<string>("FirebaseProjectId");

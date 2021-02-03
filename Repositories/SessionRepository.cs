@@ -39,6 +39,18 @@ namespace GameTime.Repositories
                 .ToList();
         }
 
+        //add a new session to the database
+        public void Add(Session session)
+        {
+            _context.Add(session);
+            _context.SaveChanges();
+        }
+
+        public Session GetById(int id)
+        {
+            return _context.Session.Where(s => s.Id == id).FirstOrDefault();
+        }
+
         public List<Session> GetAll()
         {
             return _context.Session.ToList();
