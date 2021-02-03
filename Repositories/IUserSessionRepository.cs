@@ -11,5 +11,6 @@ namespace GameTime.Repositories
         List<User> Get(int userId, int sessionId);
         UserSession GetByContent(int userId, int sessionId);
         UserSession GetById(int id);
+        void Update(UserSession userSession);
     }
 }
