@@ -89,30 +89,31 @@ namespace GameTime.Controllers
         }
 
         //delete the given userSession
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete]
+        public IActionResult Delete(UserSession userSession)
         {
-            //check that the given session exists
-            var userSession = _userSessionRepo.GetById(id);
-            if(userSession == null)
+            //check that the given userSession exists
+            if (!_userSessionRepo.Exists(userSession.UserId, userSession.SessionId))
             {
                 return BadRequest();
             }
 
+            var userSessionToDelete = _userSessionRepo.GetByContent(userSession.UserId, userSession.SessionId);
+
             //check that the current user is the owner of the associated session
             var currentUser = GetCurrentUserProfile();
-            if(currentUser.Id != userSession.Session.OwnerId)
+            if(currentUser.Id != userSessionToDelete.Session.OwnerId)
             {
                 return Unauthorized();
             }
 
             // check that the currentUser/owner is not the user in the user session
-            if(currentUser.Id == userSession.UserId)
+            if(currentUser.Id == userSessionToDelete.UserId)
             {
                 return BadRequest();
             }
 
-            _userSessionRepo.Delete(userSession);
+            _userSessionRepo.Delete(userSessionToDelete);
 
             return NoContent();
         }

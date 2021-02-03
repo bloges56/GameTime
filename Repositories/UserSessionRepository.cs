@@ -57,5 +57,13 @@ namespace GameTime.Repositories
                 .Include(us => us.Session)
                 .FirstOrDefault();
         }
+
+        public UserSession GetByContent(int userId, int sessionId)
+        {
+            return _context.UserSession
+                .Include(us => us.Session)
+                .Where(us => us.UserId == userId && us.SessionId == sessionId)
+                .FirstOrDefault();
+        }
     }
 }

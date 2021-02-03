@@ -9,6 +9,7 @@ namespace GameTime.Repositories
         void Delete(UserSession userSession);
         bool Exists(int userId, int sessionId);
         List<User> Get(int userId, int sessionId);
+        UserSession GetByContent(int userId, int sessionId);
         UserSession GetById(int id);
     }
 }

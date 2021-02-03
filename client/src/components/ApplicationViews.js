@@ -11,12 +11,17 @@ import { Home } from "../pages/Home";
 const ApplicationViews = () => {
   const { isLoggedIn } = useContext(UserProfileContext);
 
+  //check that current user is the owner of the session they are trying to edit
+
   return (
     <Switch>
       <Route path="/" exact>
         {isLoggedIn ? <Home /> : <Redirect to="/login" />}
       </Route>
       <Route path="/create">
+        {isLoggedIn ? <SessionForm /> : <Redirect to="/login" />}
+      </Route>
+      <Route path="/edit/:sessionId">
         {isLoggedIn ? <SessionForm /> : <Redirect to="/login" />}
       </Route>
       <Route path="/login">

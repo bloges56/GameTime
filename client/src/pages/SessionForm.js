@@ -25,7 +25,7 @@ const SessionForm = () => {
 
   const [session, setSession] = useState({
     ownerId: currentUser.id,
-    time: new Date()
+    time: new Date(),
   });
   const [included, setIncluded] = useState([]);
   const [excluded, setExcluded] = useState([]);
@@ -100,8 +100,12 @@ const SessionForm = () => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const includedValue = excludedCopy.find((user) => user.id === parseInt(e.target.dataset.value));
-    const newExcluded = excludedCopy.filter((user) => user.id !== parseInt(e.target.dataset.value));
+    const includedValue = excludedCopy.find(
+      (user) => user.id === parseInt(e.target.dataset.value)
+    );
+    const newExcluded = excludedCopy.filter(
+      (user) => user.id !== parseInt(e.target.dataset.value)
+    );
     includedCopy.push(includedValue);
 
     setExcluded(newExcluded);
@@ -140,6 +144,25 @@ const SessionForm = () => {
     }
   };
 
+  const removeUserSessions = () => {
+    for (let i = 0; i < excluded.length; i++) {
+      const userSessionToDelete = {
+        sessionId: sessionId,
+        userId: excluded[i].id,
+      };
+      getToken().then((token) =>
+        fetch("/api/usersession/", {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userSessionToDelete),
+        })
+      );
+    }
+  }
+
   const addSession = () => {
     return getToken().then((token) =>
       fetch("/api/session", {
@@ -153,16 +176,36 @@ const SessionForm = () => {
     );
   };
 
+  const editSession = () => {
+    return getToken().then((token) =>
+      fetch(`/api/session/${sessionId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(session),
+      })
+    );
+  };
+
   const history = useHistory();
 
   const onSubmit = () => {
     debugger;
     setLoading(true);
-    addSession().then((addedSession) => {
-      addUserSessions(addedSession);
-      setLoading(false);
-      history.push("/");
-    });
+    if (sessionId) {
+      editSession()
+      removeUserSessions()
+      addUserSessions(session) 
+    } 
+    else {
+      addSession().then((addedSession) => {
+        addUserSessions(addedSession);
+      });
+    }
+    setLoading(false);
+    history.push("/");
   };
 
   const UpdateOnInputChange = (e) => {
@@ -221,7 +264,7 @@ const SessionForm = () => {
           <List>
             {included.map((friend) => {
               return (
-                <ListItem key={friend.id} >
+                <ListItem key={friend.id}>
                   <ListItemAvatar>
                     <Avatar
                       alt={friend.userName}
@@ -229,16 +272,20 @@ const SessionForm = () => {
                     ></Avatar>
                   </ListItemAvatar>
                   <ListItemText primary={friend.userName} />
-                  <Button onClick={() => {
-                    exclude(friend.id)
-                    }}>Remove</Button>
+                  <Button
+                    onClick={() => {
+                      exclude(friend.id);
+                    }}
+                  >
+                    Remove
+                  </Button>
                 </ListItem>
               );
             })}
           </List>
         </Grid>
       </Grid>
-      <Button onClick={onSubmit}>Create</Button>
+      <Button disabled={loading} onClick={onSubmit}>{sessionId ? <>Edit</> : <>Create</>}</Button>
     </Container>
   );
 };
