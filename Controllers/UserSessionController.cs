@@ -57,7 +57,11 @@ namespace GameTime.Controllers
                 return BadRequest();
             }
 
-
+            //check if an identical userSession already exists
+            if(_userSessionRepo.Exists(userSession.UserId, userSession.SessionId))
+            {
+                return BadRequest();
+            }
             
             //if the currentUser is not the session owner, return unauthorized
             var currentUser = GetCurrentUserProfile();
@@ -82,6 +86,35 @@ namespace GameTime.Controllers
             //add the userSessoin to the database
             _userSessionRepo.Add(userSession);
             return Ok(userSession);
+        }
+
+        //delete the given userSession
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            //check that the given session exists
+            var userSession = _userSessionRepo.GetById(id);
+            if(userSession == null)
+            {
+                return BadRequest();
+            }
+
+            //check that the current user is the owner of the associated session
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != userSession.Session.OwnerId)
+            {
+                return Unauthorized();
+            }
+
+            // check that the currentUser/owner is not the user in the user session
+            if(currentUser.Id == userSession.UserId)
+            {
+                return BadRequest();
+            }
+
+            _userSessionRepo.Delete(userSession);
+
+            return NoContent();
         }
 
         private User GetCurrentUserProfile()
