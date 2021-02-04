@@ -30,5 +30,25 @@ namespace GameTime.Repositories
                 .Select(f => f.Other)
                 .ToList();
         }
+
+        //add a new friend to the database and return it
+        public void Add(Friend friend)
+        {
+            _context.Add(friend);
+            _context.SaveChanges();
+        }
+
+        //check if the given friend already exists in the database
+        public bool Exists(Friend friend)
+        {
+            var found = _context.Friend
+                .Where(f => f.UserId == friend.UserId && f.OtherId == friend.OtherId)
+                .FirstOrDefault();
+            if(found == null)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

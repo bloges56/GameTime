@@ -76,6 +76,36 @@ namespace GameTime.Controllers
             return Ok(excluded);
         }
 
+        //endpoint to add a friend to the database
+        [HttpPost]
+        public IActionResult Add(Friend friend)
+        {
+            //make sure that the userId's of the friend are valid
+            var user = _userRepo.GetById(friend.UserId);
+            var other = _userRepo.GetById(friend.OtherId);
+            if(user == null || other == null)
+            {
+                return BadRequest();
+            }
+
+            //make sure that userId matches the current user
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != friend.UserId)
+            {
+                return Unauthorized();
+            }
+
+            //check if there is a duplicate friend already in the database
+            if (_friendRepo.Exists(friend))
+            {
+                return BadRequest();
+            }
+            //ensure that the friend is not confirmed
+            friend.IsConfirmed = false;
+            _friendRepo.Add(friend);
+            return Ok(friend);
+        }
+
         private User GetCurrentUserProfile()
         {
             try
