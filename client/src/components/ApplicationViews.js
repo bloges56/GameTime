@@ -4,6 +4,7 @@ import { UserProfileContext } from "../providers/UserProfileProvider";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import SessionForm from "../pages/SessionForm";
+import Friends from "../pages/Friends"
 
 import { Home } from "../pages/Home";
 
@@ -20,6 +21,9 @@ const ApplicationViews = () => {
       </Route>
       <Route path="/edit/:sessionId">
         {isLoggedIn ? <SessionForm /> : <Redirect to="/login" />}
+      </Route>
+      <Route path="/friends">
+        {isLoggedIn ? <Friends /> : <Redirect to="/login" />}
       </Route>
       <Route path="/login">
         <Login />
