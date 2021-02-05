@@ -5,6 +5,11 @@ namespace GameTime.Repositories
 {
     public interface IFriendRepository
     {
+        void Add(Friend friend);
+        void Confirm(Friend friend);
+        bool Exists(Friend friend);
         List<User> Get(int userId);
+        Friend GetById(int id);
+        List<Friend> GetInvites(int userId);
     }
 }

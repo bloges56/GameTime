@@ -25,7 +25,8 @@ CREATE TABLE [User] (
   [IsActive] bit NOT NULL DEFAULT 1,
 
   CONSTRAINT UQ_FirebaseUserId UNIQUE(FirebaseUserId),
-  CONSTRAINT UQ_Email UNIQUE(Email)
+  CONSTRAINT UQ_Email UNIQUE(Email),
+  CONSTRAINT UQ_UserName UNIQUE(UserName)
 )
 
 CREATE TABLE [Session] (

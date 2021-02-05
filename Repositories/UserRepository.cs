@@ -1,5 +1,6 @@
 ﻿using GameTime.Data;
 using GameTime.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,14 @@ namespace GameTime.Repositories
                 return null;
             }
             
+        }
+
+        //get a user by their username
+        public User GetByUsername(string username)
+        {
+            return _context.User
+                .Where(u => u.UserName == username && u.IsActive)
+                .FirstOrDefault();
         }
 
         public List<User> GetAll()

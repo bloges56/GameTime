@@ -30,5 +30,57 @@ namespace GameTime.Repositories
                 .Select(f => f.Other)
                 .ToList();
         }
+
+        //get all unconfirmed friends of a user
+        public List<Friend> GetInvites(int userId)
+        {
+            return _context.Friend
+                .Include(f => f.User)
+                .Where(f => f.OtherId == userId && !f.IsConfirmed && f.User.IsActive)
+                .ToList();
+        }
+
+        //add a new friend to the database and return it
+        public void Add(Friend friend)
+        {
+            _context.Add(friend);
+            _context.SaveChanges();
+        }
+
+        //check if the given friend already exists in the database
+        public bool Exists(Friend friend)
+        {
+            var found = _context.Friend
+                .Where(f => f.UserId == friend.UserId && f.OtherId == friend.OtherId)
+                .FirstOrDefault();
+            if(found == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public Friend GetById(int id)
+        {
+            return _context.Friend
+                .Where(f => id == f.Id)
+                .FirstOrDefault();
+        }
+
+        //update a given friend
+        public void Confirm(Friend friend)
+        {
+            //check that the given friend exits
+            var original = GetById(friend.Id);
+            if (original == null)
+            {
+                return;
+            }
+            
+            //detach from original friend and update with new data
+            _context.Entry(original).State = EntityState.Detached;
+            _context.Entry(friend).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
     }
 }
