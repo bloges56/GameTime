@@ -9,5 +9,6 @@ namespace GameTime.Repositories
         List<User> GetAll();
         User GetByFirebaseUserId(string firebaseUserId);
         User GetById(int id);
+        User GetByUsername(string username);
     }
 }

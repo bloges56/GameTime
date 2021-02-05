@@ -46,6 +46,17 @@ namespace GameTime.Controllers
             return Ok(users);
         }
 
+        [HttpGet("find/{username}")]
+        public IActionResult Get(string username)
+        {
+            var user = _repo.GetByUsername(username);
+            if(user == null)
+            {
+                return BadRequest();
+            }
+            return Ok(user);
+        }
+
         [HttpPost]
         public IActionResult Post(User userProfile)
         {

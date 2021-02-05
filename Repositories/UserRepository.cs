@@ -37,6 +37,14 @@ namespace GameTime.Repositories
             
         }
 
+        //get a user by their username
+        public User GetByUsername(string username)
+        {
+            return _context.User
+                .Where(u => u.UserName == username && u.IsActive)
+                .FirstOrDefault();
+        }
+
         public List<User> GetAll()
         {
             return _context.User.Where(u => u.IsActive).ToList();

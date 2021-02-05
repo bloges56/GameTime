@@ -57,9 +57,7 @@ const Friends = () => {
                 </Typography>
             </Grid>
             <Grid item>
-                
                 <FriendList friends={friends}/>
-        
             </Grid>
         </Grid>
       </div>
