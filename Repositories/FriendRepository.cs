@@ -50,5 +50,28 @@ namespace GameTime.Repositories
             }
             return true;
         }
+
+        public Friend GetById(int id)
+        {
+            return _context.Friend
+                .Where(f => id == f.Id)
+                .FirstOrDefault();
+        }
+
+        //update a given friend
+        public void Confirm(Friend friend)
+        {
+            //check that the given friend exits
+            var original = GetById(friend.Id);
+            if (original == null)
+            {
+                return;
+            }
+            
+            //detach from original friend and update with new data
+            _context.Entry(original).State = EntityState.Detached;
+            _context.Entry(friend).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
     }
 }
