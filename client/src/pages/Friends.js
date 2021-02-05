@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import FriendList from "../components/FriendList";
-import AddFriend from "../components/AddFriend"
+import AddFriend from "../components/AddFriend";
+import FriendInvites from "../components/FriendInvites";
 import { UserProfileContext } from "../providers/UserProfileProvider";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 
@@ -27,6 +28,8 @@ const Friends = () => {
   //set state for all the friends
   const [friends, setFriends] = useState([]);
 
+  const [friendInvites, setFriendInvites] = useState([])
+
   //function to get all the friends of the current user from the api
   const getFriends = () => {
     return getToken().then((token) =>
@@ -42,9 +45,11 @@ const Friends = () => {
   };
 
   //function to add a friend to the database
-  const addFriend = (e) => {
-    return getToken().then((token) =>
-      fetch(`/api/user/find/${e.target.elements[0].value}`, {
+  const addFriend = (username) => {
+    return getToken().then((token) =>{
+      const fetchString = `/api/user/find/${username}` 
+      debugger;
+      return fetch(fetchString, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,13 +72,45 @@ const Friends = () => {
               body: JSON.stringify(friendToAdd),
             }).then((resp) => resp.json())
           );
-        })
+        })}
     );
   };
+
+  // accept a friend invitation
+  const confirmFriend = (friend) => {
+    return getToken().then((token) =>
+      fetch(`/api/friend/${friend.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(friend),
+      }).then(() => {
+        getFriends()
+        getFriendInvites()
+      })
+    );
+  };
+
+  //get friend invites
+  const getFriendInvites = () =>{
+    return getToken().then((token) =>
+      fetch(`/api/friend/invites/${currentUser.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((resp) => resp.json())
+        .then(setFriendInvites)
+    );
+  }
 
   //get all the friends of the user and set the intitial state of friends
   useEffect(() => {
     getFriends();
+    getFriendInvites()
   }, []);
 
   //main container for all components of the friends page
@@ -89,7 +126,10 @@ const Friends = () => {
           <FriendList friends={friends} />
         </Grid>
         <Grid item>
-            <AddFriend addFriend={addFriend} />
+          <AddFriend addFriend={addFriend} />
+        </Grid>
+        <Grid item>
+          <FriendInvites friends={friendInvites} confirmFriend={confirmFriend} />
         </Grid>
       </Grid>
     </div>

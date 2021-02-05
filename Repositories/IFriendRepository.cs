@@ -10,5 +10,6 @@ namespace GameTime.Repositories
         bool Exists(Friend friend);
         List<User> Get(int userId);
         Friend GetById(int id);
+        List<Friend> GetInvites(int userId);
     }
 }

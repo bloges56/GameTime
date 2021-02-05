@@ -31,6 +31,15 @@ namespace GameTime.Repositories
                 .ToList();
         }
 
+        //get all unconfirmed friends of a user
+        public List<Friend> GetInvites(int userId)
+        {
+            return _context.Friend
+                .Include(f => f.User)
+                .Where(f => f.OtherId == userId && !f.IsConfirmed && f.User.IsActive)
+                .ToList();
+        }
+
         //add a new friend to the database and return it
         public void Add(Friend friend)
         {
