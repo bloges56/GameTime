@@ -1,7 +1,7 @@
 import React from "react"
-import { ListItem, ListItemAvatar, Avatar, ListItemText } from "@material-ui/core"
+import { ListItem, ListItemAvatar, Avatar, ListItemText, Button } from "@material-ui/core"
 
-const Friend = ({friend}) => {
+const Friend = ({friend, removeFriend}) => {
     return (
         <ListItem>
             <ListItemAvatar>
@@ -10,6 +10,9 @@ const Friend = ({friend}) => {
             <ListItemText
             primary={friend.userName}
             />
+            <Button onClick={() => {
+                removeFriend(friend.id)
+            }}>Remove</Button>
         </ListItem>
     )
 }

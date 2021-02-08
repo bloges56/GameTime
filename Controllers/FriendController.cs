@@ -193,6 +193,13 @@ namespace GameTime.Controllers
                 return NotFound();
             }
 
+            //ensure that the current user id equals the userId of the given friend
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != friend.UserId)
+            {
+                return NotFound();
+            }
+
             // call the delete repo method
             _friendRepo.Delete(friend);
             return NoContent();
