@@ -181,6 +181,22 @@ namespace GameTime.Controllers
             return NoContent();
         }
 
+
+        //enpoint to delete a friend
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            // check that the given id is valid
+            var friend = _friendRepo.GetById(id);
+            if(friend == null)
+            {
+                return NotFound();
+            }
+
+            // call the delete repo method
+            _friendRepo.Delete(friend);
+            return NoContent();
+        }
         private User GetCurrentUserProfile()
         {
             try

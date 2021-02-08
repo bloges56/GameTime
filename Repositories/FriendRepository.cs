@@ -82,5 +82,21 @@ namespace GameTime.Repositories
             _context.Entry(friend).State = EntityState.Modified;
             _context.SaveChanges();
         }
+
+        //remove a given friend and it's related friend from the database
+        public void Delete(Friend friend)
+        {
+            // get the other friend
+            var other = _context.Friend
+                .Where(f => f.UserId == friend.OtherId && f.OtherId == friend.UserId)
+                .FirstOrDefault();
+
+            // remove both friends from the database
+            _context.Friend.Remove(other);
+            _context.Friend.Remove(friend);
+
+            _context.SaveChanges();
+
+        }
     }
 }
