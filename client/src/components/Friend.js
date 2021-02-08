@@ -5,10 +5,10 @@ const Friend = ({friend, removeFriend}) => {
     return (
         <ListItem>
             <ListItemAvatar>
-                <Avatar src={friend.imageUrl}/>
+                <Avatar src={friend.other.imageUrl}/>
             </ListItemAvatar>
             <ListItemText
-            primary={friend.userName}
+            primary={friend.other.userName}
             />
             <Button onClick={() => {
                 removeFriend(friend.id)

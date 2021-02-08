@@ -22,12 +22,11 @@ namespace GameTime.Repositories
         }
 
         //get all the friends of a given userId
-        public List<User> Get(int userId)
+        public List<Friend> Get(int userId)
         {
             return _context.Friend
                 .Include(f => f.Other)
                 .Where(f => f.UserId == userId && f.IsConfirmed && f.Other.IsActive)
-                .Select(f => f.Other)
                 .ToList();
         }
 

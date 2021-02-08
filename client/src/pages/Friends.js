@@ -135,10 +135,10 @@ const Friends = () => {
           </Typography>
         </Grid>
         <Grid item>
-          <FriendList friends={friends} />
+          <FriendList friends={friends} removeFriend={removeFriend}/>
         </Grid>
         <Grid item>
-          <AddFriend addFriend={addFriend} removeFriend={removeFriend}/>
+          <AddFriend addFriend={addFriend} />
         </Grid>
         <Grid item>
           <FriendInvites friends={friendInvites} confirmFriend={confirmFriend} />

@@ -87,7 +87,7 @@ namespace GameTime.Controllers
             var usersInSession = _userSessionRepo.Get(currentUser.Id, id);
 
             // get all the friends of the current user
-            var friends = _friendRepo.Get(currentUser.Id);
+            var friends = _friendRepo.Get(currentUser.Id).Select(f => f.Other);
 
             // filter out the friends that are already invited to the session
             var excluded = friends.Except(usersInSession);
