@@ -22,12 +22,11 @@ namespace GameTime.Repositories
         }
 
         //get all the friends of a given userId
-        public List<User> Get(int userId)
+        public List<Friend> Get(int userId)
         {
             return _context.Friend
                 .Include(f => f.Other)
                 .Where(f => f.UserId == userId && f.IsConfirmed && f.Other.IsActive)
-                .Select(f => f.Other)
                 .ToList();
         }
 
@@ -81,6 +80,22 @@ namespace GameTime.Repositories
             _context.Entry(original).State = EntityState.Detached;
             _context.Entry(friend).State = EntityState.Modified;
             _context.SaveChanges();
+        }
+
+        //remove a given friend and it's related friend from the database
+        public void Delete(Friend friend)
+        {
+            // get the other friend
+            var other = _context.Friend
+                .Where(f => f.UserId == friend.OtherId && f.OtherId == friend.UserId)
+                .FirstOrDefault();
+
+            // remove both friends from the database
+            _context.Friend.Remove(other);
+            _context.Friend.Remove(friend);
+
+            _context.SaveChanges();
+
         }
     }
 }

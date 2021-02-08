@@ -1,15 +1,18 @@
 import React from "react"
-import { ListItem, ListItemAvatar, Avatar, ListItemText } from "@material-ui/core"
+import { ListItem, ListItemAvatar, Avatar, ListItemText, Button } from "@material-ui/core"
 
-const Friend = ({friend}) => {
+const Friend = ({friend, removeFriend}) => {
     return (
         <ListItem>
             <ListItemAvatar>
-                <Avatar src={friend.imageUrl}/>
+                <Avatar src={friend.other.imageUrl}/>
             </ListItemAvatar>
             <ListItemText
-            primary={friend.userName}
+            primary={friend.other.userName}
             />
+            <Button onClick={() => {
+                removeFriend(friend.id)
+            }}>Remove</Button>
         </ListItem>
     )
 }

@@ -76,6 +76,18 @@ const Friends = () => {
     );
   };
 
+  // function to call the remove method of the database for a friend
+  const removeFriend = (id) => {
+    return getToken().then((token) =>
+    fetch(`/api/friend/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(getFriends)
+    )
+  }
+
   // accept a friend invitation
   const confirmFriend = (friend) => {
     return getToken().then((token) =>
@@ -123,7 +135,7 @@ const Friends = () => {
           </Typography>
         </Grid>
         <Grid item>
-          <FriendList friends={friends} />
+          <FriendList friends={friends} removeFriend={removeFriend}/>
         </Grid>
         <Grid item>
           <AddFriend addFriend={addFriend} />

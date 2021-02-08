@@ -77,7 +77,7 @@ namespace GameTime.Controllers
                 return BadRequest();
             }
             //check that user is a friend of the currentuser/owner
-            if (!_friendRepo.Get(currentUser.Id).Contains(user))
+            if (!_friendRepo.Get(currentUser.Id).Select(f => f.Other).Contains(user))
             {
                 return Unauthorized();
             }

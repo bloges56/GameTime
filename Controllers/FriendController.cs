@@ -87,7 +87,7 @@ namespace GameTime.Controllers
             var usersInSession = _userSessionRepo.Get(currentUser.Id, id);
 
             // get all the friends of the current user
-            var friends = _friendRepo.Get(currentUser.Id);
+            var friends = _friendRepo.Get(currentUser.Id).Select(f => f.Other);
 
             // filter out the friends that are already invited to the session
             var excluded = friends.Except(usersInSession);
@@ -181,6 +181,29 @@ namespace GameTime.Controllers
             return NoContent();
         }
 
+
+        //enpoint to delete a friend
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            // check that the given id is valid
+            var friend = _friendRepo.GetById(id);
+            if(friend == null)
+            {
+                return NotFound();
+            }
+
+            //ensure that the current user id equals the userId of the given friend
+            var currentUser = GetCurrentUserProfile();
+            if(currentUser.Id != friend.UserId)
+            {
+                return NotFound();
+            }
+
+            // call the delete repo method
+            _friendRepo.Delete(friend);
+            return NoContent();
+        }
         private User GetCurrentUserProfile()
         {
             try

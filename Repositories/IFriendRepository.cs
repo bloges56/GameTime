@@ -7,8 +7,9 @@ namespace GameTime.Repositories
     {
         void Add(Friend friend);
         void Confirm(Friend friend);
+        void Delete(Friend friend);
         bool Exists(Friend friend);
-        List<User> Get(int userId);
+        List<Friend> Get(int userId);
         Friend GetById(int id);
         List<Friend> GetInvites(int userId);
     }
