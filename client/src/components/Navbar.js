@@ -16,31 +16,34 @@ const Navbar = () => {
             <Tab
               icon={
                 <Typography>
-                  <Link href="/" color="white">
+                  <Link href="/" color="inherit">
                     <HomeIcon />
                   </Link>
                 </Typography>
               }
+              value={0}
             />
             <Tab
               label={
                 <Typography>
-                  <Link href="/create" color="white">
+                  <Link href="/create" color="inherit">
                     New Session
                   </Link>
                 </Typography>
               }
+              value={1}
             />
             <Tab
               label={
                 <Typography>
-                  <Link href="/friends" color="white">
+                  <Link href="/friends" color="inherit">
                     Friends
                   </Link>
                 </Typography>
               }
+              value={2}
             />
-            <Tab label="Logout" onClick={logout} />
+            <Tab label={<Typography>Logout</Typography>} onClick={logout} color="inherit" value={3}/>
           </Tabs>
         </AppBar>
       ) : (

@@ -46,7 +46,7 @@ const SessionForm = () => {
 
   const getIncluded = () => {
     return getToken().then((token) =>
-      fetch(`/api/usersession/${sessionId}`, {
+      fetch(`/api/friend/included/${sessionId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -144,7 +144,7 @@ const SessionForm = () => {
     for (let i = 0; i < included.length; i++) {
       const newUserSession = {
         sessionId: addedSession.id,
-        userId: included[i].id,
+        userId: included[i].otherId,
       };
       getToken().then((token) =>
         fetch("/api/usersession", {
@@ -163,7 +163,7 @@ const SessionForm = () => {
     for (let i = 0; i < excluded.length; i++) {
       const userSessionToDelete = {
         sessionId: sessionId,
-        userId: excluded[i].id,
+        userId: excluded[i].otherId,
       };
       getToken().then((token) =>
         fetch("/api/usersession/", {
@@ -269,10 +269,10 @@ const SessionForm = () => {
         <Grid item>
           <InputLabel>Add Friends</InputLabel>
           <Select>
-            {excluded.map((friend) => {
+            {excluded?.map((friend) => {
               return (
-                <MenuItem key={friend.other.id} value={friend.other.id} onClick={include}>
-                  {friend.other.userName}
+                <MenuItem key={friend?.other.id} value={friend?.other.id} onClick={include}>
+                  {friend?.other.userName}
                 </MenuItem>
               );
             })}
@@ -280,7 +280,7 @@ const SessionForm = () => {
         </Grid>
         <Grid item>
           <List>
-            {included.map((friend) => {
+            {included?.map((friend) => {
               return (
                 <ListItem key={friend.other.id}>
                   <ListItemAvatar>
