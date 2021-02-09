@@ -116,10 +116,10 @@ const SessionForm = () => {
     const excludedCopy = [...excluded];
 
     const includedValue = excludedCopy.find(
-      (user) => user.id === parseInt(e.target.dataset.value)
+      (user) => user.other.id === parseInt(e.target.dataset.value)
     );
     const newExcluded = excludedCopy.filter(
-      (user) => user.id !== parseInt(e.target.dataset.value)
+      (user) => user.other.id !== parseInt(e.target.dataset.value)
     );
     includedCopy.push(includedValue);
 
@@ -132,8 +132,8 @@ const SessionForm = () => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const excludedValue = includedCopy.find((user) => user.id === id);
-    const newIncluded = includedCopy.filter((user) => user.id !== id);
+    const excludedValue = includedCopy.find((user) => user.other.id === id);
+    const newIncluded = includedCopy.filter((user) => user.other.id !== id);
     excludedCopy.push(excludedValue);
 
     setExcluded(excludedCopy);
@@ -271,8 +271,8 @@ const SessionForm = () => {
           <Select>
             {excluded.map((friend) => {
               return (
-                <MenuItem key={friend.id} value={friend.id} onClick={include}>
-                  {friend.userName}
+                <MenuItem key={friend.other.id} value={friend.other.id} onClick={include}>
+                  {friend.other.userName}
                 </MenuItem>
               );
             })}
@@ -282,17 +282,17 @@ const SessionForm = () => {
           <List>
             {included.map((friend) => {
               return (
-                <ListItem key={friend.id}>
+                <ListItem key={friend.other.id}>
                   <ListItemAvatar>
                     <Avatar
-                      alt={friend.userName}
-                      src={friend.imageUrl}
+                      alt={friend.other.userName}
+                      src={friend.other.imageUrl}
                     ></Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={friend.userName} />
+                  <ListItemText primary={friend.other.userName} />
                   <Button
                     onClick={() => {
-                      exclude(friend.id);
+                      exclude(friend.other.id);
                     }}
                   >
                     Remove

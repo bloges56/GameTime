@@ -12,6 +12,7 @@ import FolderIcon from "@material-ui/icons/Folder";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
+import { SessionContext } from "../providers/SessionProvider";
 
 export const Home = () => {
   const useStyles = makeStyles((theme) => ({
@@ -46,7 +47,7 @@ export const Home = () => {
   const [ loading, setLoading ] = useState(false);
 
   const handleOpen = (e) => {
-    const selectedSession = confirmedSessions.find(session => session.id === parseInt(e.target.id))
+    const selectedSession = getLocalConfirmedSessions().find(session => session.id === parseInt(e.target.id))
     setSessionToDelete(selectedSession);
     setPendingDelete(true);
   };
@@ -56,12 +57,12 @@ export const Home = () => {
     setSessionToDelete({})
   };
 
-  //set state for sessions
-  const [confirmedSessions, setConfirmedSessions] = useState([]);
+  //set state for unconfirmedsessions
   const [unconfirmedSessions, setUnconfirmedSessions] = useState([]);
 
   //import functions for getting the current user and token
   const { getCurrentUser, getToken } = useContext(UserProfileContext);
+  const { getLocalConfirmedSessions, setConfirmedSessions } = useContext(SessionContext);
 
   let currentUser = getCurrentUser();
 
@@ -142,7 +143,7 @@ export const Home = () => {
         </Typography>
         <div className={classes.demo}>
           <List>
-            {confirmedSessions.map((session) => {
+            {getLocalConfirmedSessions().map((session) => {
               return (
                 <ListItem key={session.id}>
                   <ListItemAvatar>
