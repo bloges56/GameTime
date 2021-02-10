@@ -11,7 +11,7 @@ import  DeleteIcon  from "@material-ui/icons/Delete";
 
 const Friend = ({ friend, removeFriend }) => {
   return (
-    <ListItem>
+    <ListItem key={friend.other.id}>
       <ListItemAvatar>
         <Avatar src={friend.other.imageUrl} />
       </ListItemAvatar>

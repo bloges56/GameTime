@@ -14,6 +14,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import { ListItemSecondaryAction, IconButton, Link } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { SessionContext } from "../providers/SessionProvider";
 
 export const Home = () => {
@@ -144,13 +145,13 @@ export const Home = () => {
 
   return (
     <Grid container spacing={2} justify="center">
-      <Grid container item xs={12} md={6} lg={3} justify="center">
+      <Grid container item xs={12} md={6} lg={4} justify="center">
         <Grid item xs={12}>
           <Typography variant="h6" className={classes.title}>
             Your Upocoming Sessions
           </Typography>
         </Grid>
-       <Grid item xs={6}>
+       <Grid item xs={12} md={7}>
         <div className={classes.demo}>
           <List>
             {getLocalConfirmedSessions().map((session) => {
@@ -219,13 +220,13 @@ export const Home = () => {
         </div>
         </Grid>
       </Grid>
-      <Grid container item xs={12} md={6} lg={3}  justify="center">
+      <Grid container item xs={12} md={6} lg={4}  justify="center">
         <Grid item xs={12}>
         <Typography variant="h6" className={classes.title}>
           Unconfirmed Sessions
         </Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={7}>
         <div className={classes.demo}>
           <List>
             {unconfirmedSessions.map((session) => {
@@ -240,14 +241,16 @@ export const Home = () => {
                     primary={session.title}
                     secondary={session.time}
                   />
-                  <button
-                    type="button"
-                    id={session.id}
-                    disabled={loading}
-                    onClick={confirmSession}
-                  >
-                    Confirm
-                  </button>
+                  <ListItemSecondaryAction>
+                        <IconButton
+                          edge="start"
+                          aria-label="delete"
+                          onClick={() => confirmSession(session.id)}
+                          disabled={loading}
+                        >
+                          <CheckCircleIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
                 </ListItem>
               );
             })}

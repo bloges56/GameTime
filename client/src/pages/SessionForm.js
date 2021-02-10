@@ -4,7 +4,6 @@ import { UserProfileContext } from "../providers/UserProfileProvider";
 import {
   Button,
   FormGroup,
-  Container,
   TextField,
   Grid,
   Select,
@@ -16,10 +15,24 @@ import {
   InputLabel,
   Avatar,
   ListItemText,
+  makeStyles
 } from "@material-ui/core";
 
+const useStyles = makeStyles({
+  root: {
+    textAlign:"left",
+    marginTop: "3em"
+  },
+  items: {
+    marginTop:"1em"
+  }
+})
+
 const SessionForm = () => {
-  const { getCurrentUser, getToken, isAuthorized } = useContext(
+  //styles for the form
+  const classes = useStyles()
+
+  const { getCurrentUser, getToken } = useContext(
     UserProfileContext
   );
 
@@ -28,10 +41,6 @@ const SessionForm = () => {
   const currentUser = getCurrentUser();
 
   const { sessionId } = useParams();
-  // const [session, setSession] = useState({
-  //   ownerId: currentUser.id,
-  //   time: new Date()
-  // });
 
   const [title, setTitle ] = useState()
   const [game, setGame ] = useState()
@@ -233,29 +242,34 @@ const SessionForm = () => {
   };
 
   return (
-    <Container>
-      <FormGroup>
+    <Grid container className={classes.root} justify="center">
+      <Grid item xs={11} md={6}>
+      <FormGroup className={classes.items}>
         <InputLabel htmlFor="title">Title</InputLabel>
         <Input
           id="title"
           name="title"
           onChange={(e) => {setTitle(e.target.value)}}
           value={title}
+          required
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup className={classes.items}>
         <TextField
           id="time"
-          label="time"
+          label="Session Time"
           name="time"
           type="datetime-local"
           value={time}
           onChange={(e) => {setTime(e.target.value)}}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup className={classes.items}>
         <InputLabel htmlFor="game">Game</InputLabel>
         <Input
           id="game"
@@ -265,7 +279,7 @@ const SessionForm = () => {
         />
       </FormGroup>
 
-      <Grid container spacing={2}>
+      <Grid className={classes.items} container spacing={2}>
         <Grid item>
           <InputLabel>Add Friends</InputLabel>
           <Select>
@@ -303,10 +317,11 @@ const SessionForm = () => {
           </List>
         </Grid>
       </Grid>
-      <Button disabled={loading} onClick={onSubmit}>
+      <Button className={classes.items} disabled={loading} onClick={onSubmit}>
         {sessionId ? <>Edit</> : <>Create</>}
       </Button>
-    </Container>
+      </Grid>
+    </Grid>
   );
 };
 
