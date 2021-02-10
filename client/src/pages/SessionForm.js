@@ -17,6 +17,7 @@ import {
   ListItemText,
   makeStyles
 } from "@material-ui/core";
+import { SessionContext } from "../providers/SessionProvider"
 
 const useStyles = makeStyles({
   root: {
@@ -35,6 +36,9 @@ const SessionForm = () => {
   const { getCurrentUser, getToken } = useContext(
     UserProfileContext
   );
+
+  //get the getConfirmed sessions method
+  const { getConfirmedSessions } = useContext(SessionContext)
 
   const history = useHistory();
 
@@ -230,11 +234,13 @@ const SessionForm = () => {
         ownerId: currentUser.id,
       }
       editSession(sessionToEdit);
+      getConfirmedSessions()
       removeUserSessions();
       addUserSessions(sessionToEdit);
     } else {
       addSession().then((addedSession) => {
         addUserSessions(addedSession);
+        getConfirmedSessions()
       });
     }
     setLoading(false);

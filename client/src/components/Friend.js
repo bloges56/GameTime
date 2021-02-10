@@ -20,7 +20,7 @@ const Friend = ({ friend, removeFriend }) => {
         <IconButton
           edge="end"
           aria-label="delete"
-          onClick={() => removeFriend(friend.other.id)}
+          onClick={() => removeFriend(friend.id)}
         >
           <DeleteIcon />
         </IconButton>

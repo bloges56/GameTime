@@ -67,25 +67,25 @@ export const Home = () => {
 
   //import functions for getting the current user and token
   const { getCurrentUser, getToken } = useContext(UserProfileContext);
-  const { getLocalConfirmedSessions, setConfirmedSessions } = useContext(
+  const { getLocalConfirmedSessions, getConfirmedSessions } = useContext(
     SessionContext
   );
 
   let currentUser = getCurrentUser();
 
   //get all the sessions for the user that are confirmed
-  const getConfirmedSessions = () => {
-    return getToken().then((token) =>
-      fetch(`/api/session/confirmed/${currentUser.id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((resp) => resp.json())
-        .then(setConfirmedSessions)
-    );
-  };
+  // const getConfirmedSessions = () => {
+  //   return getToken().then((token) =>
+  //     fetch(`/api/session/confirmed/${currentUser.id}`, {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //       .then((resp) => resp.json())
+  //       .then(setConfirmedSessions)
+  //   );
+  // };
 
   //get all the sessions for the user that are unconfirmed
   const getUnconfirmedSessions = () => {
@@ -119,12 +119,11 @@ export const Home = () => {
   };
 
   //confirm a selected session
-  const confirmSession = (e) => {
+  const confirmSession = (id) => {
     setLoading(true);
-    debugger;
     return getToken()
       .then((token) =>
-        fetch(`/api/usersession/confirm/${e.target.id}`, {
+        fetch(`/api/usersession/confirm/${id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -162,12 +161,19 @@ export const Home = () => {
                       <FolderIcon />
                     </Avatar>
                   </ListItemAvatar>
+                  {session.ownerId === currentUser.id ? (
                   <Link href={`/edit/${session.id}`}>
                     <ListItemText
                       primary={session.title}
                       secondary={session.time}
                     />
                   </Link>
+                  ): (
+                    <ListItemText
+                      primary={session.title}
+                      secondary={session.time}
+                    />
+                  )}
                   {session.ownerId === currentUser.id ? (
                     <div>
                       <ListItemSecondaryAction>

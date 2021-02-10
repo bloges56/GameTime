@@ -48,7 +48,6 @@ const Friends = () => {
   const addFriend = (username) => {
     return getToken().then((token) =>{
       const fetchString = `/api/user/find/${username}` 
-      debugger;
       return fetch(fetchString, {
         method: "GET",
         headers: {
