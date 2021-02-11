@@ -4,6 +4,7 @@ import AddFriend from "../components/AddFriend";
 import FriendInvites from "../components/FriendInvites";
 import { UserProfileContext } from "../providers/UserProfileProvider";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
+import { toast } from "react-toastify"
 
 const Friends = () => {
   //styles for materialUI components
@@ -69,7 +70,10 @@ const Friends = () => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(friendToAdd),
-            }).then((resp) => resp.json())
+            }).then((resp) => {
+              resp.json()
+              toast.success("Friend Request Sent");
+            })
           );
         })}
     );

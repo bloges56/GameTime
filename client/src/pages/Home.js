@@ -147,7 +147,7 @@ export const Home = () => {
       <Grid container item xs={12} md={6} lg={4} justify="center">
         <Grid item xs={12}>
           <Typography variant="h6" className={classes.title}>
-            Your Upocoming Sessions
+            Your Upcoming Sessions
           </Typography>
         </Grid>
        <Grid item xs={12} md={7}>
