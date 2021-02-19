@@ -4,7 +4,6 @@ import { UserProfileContext } from "../providers/UserProfileProvider";
 import {
   Button,
   FormGroup,
-  Container,
   TextField,
   Grid,
   Select,
@@ -16,22 +15,36 @@ import {
   InputLabel,
   Avatar,
   ListItemText,
+  makeStyles
 } from "@material-ui/core";
+import { SessionContext } from "../providers/SessionProvider"
+
+const useStyles = makeStyles({
+  root: {
+    textAlign:"left",
+    marginTop: "3em"
+  },
+  items: {
+    marginTop:"1em"
+  }
+})
 
 const SessionForm = () => {
-  const { getCurrentUser, getToken, isAuthorized } = useContext(
+  //styles for the form
+  const classes = useStyles()
+
+  const { getCurrentUser, getToken } = useContext(
     UserProfileContext
   );
+
+  //get the getConfirmed sessions method
+  const { getConfirmedSessions } = useContext(SessionContext)
 
   const history = useHistory();
 
   const currentUser = getCurrentUser();
 
   const { sessionId } = useParams();
-  // const [session, setSession] = useState({
-  //   ownerId: currentUser.id,
-  //   time: new Date()
-  // });
 
   const [title, setTitle ] = useState()
   const [game, setGame ] = useState()
@@ -46,7 +59,7 @@ const SessionForm = () => {
 
   const getIncluded = () => {
     return getToken().then((token) =>
-      fetch(`/api/usersession/${sessionId}`, {
+      fetch(`/api/friend/included/${sessionId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -116,10 +129,10 @@ const SessionForm = () => {
     const excludedCopy = [...excluded];
 
     const includedValue = excludedCopy.find(
-      (user) => user.id === parseInt(e.target.dataset.value)
+      (user) => user.other.id === parseInt(e.target.dataset.value)
     );
     const newExcluded = excludedCopy.filter(
-      (user) => user.id !== parseInt(e.target.dataset.value)
+      (user) => user.other.id !== parseInt(e.target.dataset.value)
     );
     includedCopy.push(includedValue);
 
@@ -132,8 +145,8 @@ const SessionForm = () => {
     const includedCopy = [...included];
     const excludedCopy = [...excluded];
 
-    const excludedValue = includedCopy.find((user) => user.id === id);
-    const newIncluded = includedCopy.filter((user) => user.id !== id);
+    const excludedValue = includedCopy.find((user) => user.other.id === id);
+    const newIncluded = includedCopy.filter((user) => user.other.id !== id);
     excludedCopy.push(excludedValue);
 
     setExcluded(excludedCopy);
@@ -144,7 +157,7 @@ const SessionForm = () => {
     for (let i = 0; i < included.length; i++) {
       const newUserSession = {
         sessionId: addedSession.id,
-        userId: included[i].id,
+        userId: included[i].otherId,
       };
       getToken().then((token) =>
         fetch("/api/usersession", {
@@ -163,7 +176,7 @@ const SessionForm = () => {
     for (let i = 0; i < excluded.length; i++) {
       const userSessionToDelete = {
         sessionId: sessionId,
-        userId: excluded[i].id,
+        userId: excluded[i].otherId,
       };
       getToken().then((token) =>
         fetch("/api/usersession/", {
@@ -221,11 +234,13 @@ const SessionForm = () => {
         ownerId: currentUser.id,
       }
       editSession(sessionToEdit);
+      getConfirmedSessions()
       removeUserSessions();
       addUserSessions(sessionToEdit);
     } else {
       addSession().then((addedSession) => {
         addUserSessions(addedSession);
+        getConfirmedSessions()
       });
     }
     setLoading(false);
@@ -233,29 +248,34 @@ const SessionForm = () => {
   };
 
   return (
-    <Container>
-      <FormGroup>
+    <Grid container className={classes.root} justify="center">
+      <Grid item xs={11} md={6}>
+      <FormGroup className={classes.items}>
         <InputLabel htmlFor="title">Title</InputLabel>
         <Input
           id="title"
           name="title"
           onChange={(e) => {setTitle(e.target.value)}}
           value={title}
+          required
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup className={classes.items}>
         <TextField
           id="time"
-          label="time"
+          label="Session Time"
           name="time"
           type="datetime-local"
           value={time}
           onChange={(e) => {setTime(e.target.value)}}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup className={classes.items}>
         <InputLabel htmlFor="game">Game</InputLabel>
         <Input
           id="game"
@@ -265,14 +285,14 @@ const SessionForm = () => {
         />
       </FormGroup>
 
-      <Grid container spacing={2}>
+      <Grid className={classes.items} container spacing={2}>
         <Grid item>
           <InputLabel>Add Friends</InputLabel>
           <Select>
-            {excluded.map((friend) => {
+            {excluded?.map((friend) => {
               return (
-                <MenuItem key={friend.id} value={friend.id} onClick={include}>
-                  {friend.userName}
+                <MenuItem key={friend?.other.id} value={friend?.other.id} onClick={include}>
+                  {friend?.other.userName}
                 </MenuItem>
               );
             })}
@@ -280,19 +300,19 @@ const SessionForm = () => {
         </Grid>
         <Grid item>
           <List>
-            {included.map((friend) => {
+            {included?.map((friend) => {
               return (
-                <ListItem key={friend.id}>
+                <ListItem key={friend.other.id}>
                   <ListItemAvatar>
                     <Avatar
-                      alt={friend.userName}
-                      src={friend.imageUrl}
+                      alt={friend.other.userName}
+                      src={friend.other.imageUrl}
                     ></Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={friend.userName} />
+                  <ListItemText primary={friend.other.userName} />
                   <Button
                     onClick={() => {
-                      exclude(friend.id);
+                      exclude(friend.other.id);
                     }}
                   >
                     Remove
@@ -303,10 +323,11 @@ const SessionForm = () => {
           </List>
         </Grid>
       </Grid>
-      <Button disabled={loading} onClick={onSubmit}>
+      <Button className={classes.items} disabled={loading} onClick={onSubmit}>
         {sessionId ? <>Edit</> : <>Create</>}
       </Button>
-    </Container>
+      </Grid>
+    </Grid>
   );
 };
 

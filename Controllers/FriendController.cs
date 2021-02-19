@@ -87,13 +87,58 @@ namespace GameTime.Controllers
             var usersInSession = _userSessionRepo.Get(currentUser.Id, id);
 
             // get all the friends of the current user
-            var friends = _friendRepo.Get(currentUser.Id).Select(f => f.Other);
+            var friends = _friendRepo.Get(currentUser.Id);
 
             // filter out the friends that are already invited to the session
-            var excluded = friends.Except(usersInSession);
+            var excluded = friends.Where(friend =>
+            {
+                for(int i = 0; i < usersInSession.Count; i++)
+                {
+                    if(usersInSession[i].Id == friend.OtherId)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            });
 
             // return the excluded friends
             return Ok(excluded);
+        }
+
+        [HttpGet("included/{id}")]
+        public IActionResult GeIncluded(int id)
+        {
+            // check that the given session exists
+            var session = _sessionRepo.GetById(id);
+            if (session == null)
+            {
+                return BadRequest();
+            }
+
+            //get all the users already in a current session
+            var currentUser = GetCurrentUserProfile();
+            var usersInSession = _userSessionRepo.Get(currentUser.Id, id);
+
+            // get all the friends of the current user
+            var friends = _friendRepo.Get(currentUser.Id);
+
+            // filter out the friends that are not invited to the session
+            var included = friends.Where(friend =>
+            {
+                var check = false;
+                for (int i = 0; i < usersInSession.Count; i++)
+                {
+                    if (usersInSession[i].Id == friend.OtherId)
+                    {
+                        check = true;
+                    }
+                }
+                return check;
+            });
+
+            // return the excluded friends
+            return Ok(included);
         }
 
         //endpoint to add a friend to the database

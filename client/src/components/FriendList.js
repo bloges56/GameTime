@@ -6,7 +6,7 @@ const FriendList = ({friends, removeFriend}) => {
     return (
         <List>
             {friends.map(friend => {
-                return <Friend friend={friend} removeFriend={removeFriend}/>
+                return <Friend key={friend.other.id} friend={friend} removeFriend={removeFriend}/>
             })}
         </List>
     )
