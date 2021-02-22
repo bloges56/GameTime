@@ -22,6 +22,7 @@ namespace GameTime.Repositories
         {
             return _context.UserSession
                 .Include(us => us.Session)
+                .ThenInclude(s => s.UserSessions)
                 .Where(us => us.UserId == userId && us.IsConfirmed)
                 .Where(us => us.Session.Time > DateTime.Now)
                 .Select(us => us.Session)
