@@ -16,6 +16,8 @@ import { ListItemSecondaryAction, IconButton, Link } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { SessionContext } from "../providers/SessionProvider";
+import PageViewIcon from '@material-ui/icons/Pageview'
+import SessionDetails from "../components/SessionDetails"
 
 export const Home = () => {
   const useStyles = makeStyles((theme) => ({
@@ -60,6 +62,17 @@ export const Home = () => {
   const handleClose = () => {
     setPendingDelete(false);
     setSessionToDelete({});
+  };
+
+  // session details state and functions
+  const [open, setOpen] = useState(false);
+
+  const handleOpenSession = () => {
+    setOpen(true);
+  };
+
+  const handleCloseSession = () => {
+    setOpen(false);
   };
 
   //set state for unconfirmedsessions
@@ -174,17 +187,23 @@ export const Home = () => {
                       secondary={session.time}
                     />
                   )}
+                    <IconButton
+                      edge="start"
+                      aria-label="view"
+                      onClick={() => handleOpenSession()}
+                    >
+                      <PageViewIcon />
+                    </IconButton>
+                  <SessionDetails session={session} closeModal={handleCloseSession} open={open}/>
                   {session.ownerId === currentUser.id ? (
                     <div>
-                      <ListItemSecondaryAction>
                         <IconButton
-                          edge="start"
+                          edge="end"
                           aria-label="delete"
                           onClick={() => handleOpen(session.id)}
                         >
                           <DeleteIcon id={session.id} />
                         </IconButton>
-                      </ListItemSecondaryAction>
                       <Modal
                         aria-labelledby="transition-modal-title"
                         className={classes.modal}

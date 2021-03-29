@@ -79,7 +79,10 @@ namespace GameTime.Controllers
         public IActionResult GetById(int id)
         {
             var currentUser = GetCurrentUserProfile();
-            var users = _userSessionRepo.Get(currentUser.Id, id);
+            if(currentUser == null)
+            {
+                return BadRequest();
+            }
 
             // check that the session exists
             var session = _sessionRepo.GetById(id);
@@ -88,8 +91,9 @@ namespace GameTime.Controllers
                 return BadRequest();
             }
 
+            var users = session.UserSessions.Select(us => us.User);
             // make sure that the current user has either been invited to the sesison or is the session owner
-            if(!users.Contains(currentUser) && session.OwnerId != currentUser.Id)
+            if(!users.Contains(currentUser))
             {
                 return Unauthorized();
             }

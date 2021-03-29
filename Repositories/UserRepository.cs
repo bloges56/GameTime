@@ -19,7 +19,8 @@ namespace GameTime.Repositories
 
         public User GetByFirebaseUserId(string firebaseUserId)
         {
-            return _context.User.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId);
+            var user = _context.User.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId);
+            return user;
 
         }
 

@@ -22,6 +22,7 @@ namespace GameTime.Repositories
         {
             return _context.UserSession
                 .Include(us => us.Session)
+                .ThenInclude(s => s.UserSessions)
                 .Where(us => us.UserId == userId && us.IsConfirmed)
                 .Where(us => us.Session.Time > DateTime.Now)
                 .Select(us => us.Session)
@@ -48,7 +49,7 @@ namespace GameTime.Repositories
 
         public Session GetById(int id)
         {
-            return _context.Session.Where(s => s.Id == id).FirstOrDefault();
+            return _context.Session.Where(s => s.Id == id).Include(s => s.UserSessions).ThenInclude(us => us.User).FirstOrDefault();
         }
 
         //edit a session in the database
